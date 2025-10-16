@@ -69,7 +69,8 @@ class Main:
             printer.install()
         except PrinterAlreadyExist:
             messagebox.showwarning('Notice', f'Selected printer {printer.name} has already in your system')
-        except Exception:
+        except Exception as e:
+            logger.error(f'insatll printer {printer} failed: {e}')
             messagebox.showerror('Failed', f'Printer {printer.name} installed failed. Please contact admin')
         else:
             messagebox.showinfo('Success', f'Printer {printer.name} installed successfully')
