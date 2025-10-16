@@ -42,7 +42,7 @@ class DriverInstaller:
             logger.debug(f'installed driver: {result.stdout.strip()}')
             return
         
-        logger.error(f'installing driver failed: {result.stderr.strip()}')
+        logger.error(f'installing driver failed: {result.stderr.strip()}, {result.stdout.strip()}')
         raise DriverInstallError(error_msg=result.stderr.strip())
 
     def install(self) -> None:
