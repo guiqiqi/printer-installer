@@ -16,9 +16,9 @@ import ctypes
 from tkinter import messagebox
 
 Printers = [
-    Printer('10.56.92.134', 'Color Printer Sales', 'Color printer in Sales Zone', 'Lexmark CX825 Series Class Driver'),
-    Printer('10.56.92.135', 'B&W Printer AIoT', 'Black and White printer in Zone Reception', 'Lexmark MX510 Series Class Driver'),
-    Printer('10.56.92.136', 'B&W Printer Management', 'Black and White printer in Zone Management', 'Lexmark MX510 Series Class Driver')
+    Printer('10.56.92.134', 'Color Printer Sales', 'Color printer in Sales Zone', 'EPSON WF-C579R Series'),
+    Printer('10.56.92.135', 'B&W Printer AIoT', 'Black and White printer in Zone Reception', 'EPSON WF-C579R Series'),
+    Printer('10.56.92.136', 'B&W Printer Management', 'Black and White printer in Zone Management', 'EPSON WF-C579R Series')
 ]
 
 
@@ -41,6 +41,9 @@ class Main:
         DriverInstallButton.bind('<Button-1>', self._install_driver)
         AddPrinterButton.bind('<Button-1>', self._add_printer)
 
+        self._driver_name = Printers[0].driver
+        assert all(printer.driver == self._driver_name for printer in Printers)
+
     def _select_printer(self, _e) -> None:
         selected_printer = SelectedPrinter.get()
         IntroLabel.config(text=self._printer_maps[selected_printer].description)
@@ -49,7 +52,7 @@ class Main:
         DriverInstallButton.config(state='disabled')
         try:
             messagebox.showinfo('Driver Installation', 'Start driver installation, it may need a while, UI may not responding during this time')
-            installer = DriverInstaller(self.DriverFolder)
+            installer = DriverInstaller(self.DriverFolder, self._driver_name)
             installer.install()
         except Exception:
             messagebox.showerror('Driver Installation', 'Driver install failed. Please contact admin')
