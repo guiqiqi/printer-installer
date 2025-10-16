@@ -15,6 +15,7 @@ import sys
 import ctypes
 from tkinter import messagebox
 
+# NOTE: all printers add to one printer group should have same printer driver name !!!
 Printers = [
     Printer('10.56.92.134', 'Color Printer Sales', 'Color printer in Sales Zone', 'EPSON WF-C579R Series'),
     Printer('10.56.92.135', 'B&W Printer AIoT', 'Black and White printer in Zone Reception', 'EPSON WF-C579R Series'),

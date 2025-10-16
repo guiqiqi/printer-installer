@@ -53,6 +53,7 @@ class DriverInstaller:
         driver_path = path.abspath(driver)
 
         # Run printer driver adding process
+        logger.debug('trying to add printer driver: {driver_path}, {name}')
         subprocess.run(
             ['printui.exe', '/ia', '/m', name, '/f', driver_path, '/q'],
             text=True,
