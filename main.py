@@ -1,11 +1,11 @@
-from installer import DriverInstaller
+from driver import INFInstaller
 from printer import Printer, PrinterAlreadyExist
 from ui import (
-    Root, 
+    Root,
     SelectedPrinter,
-    DriverInstallButton, 
+    DriverInstallButton,
     AddPrinterButton,
-    PrinterDropdown, 
+    PrinterDropdown,
     IntroLabel
 )
 from log import logger, BasePath
@@ -15,16 +15,18 @@ import sys
 import ctypes
 from tkinter import messagebox
 
-# NOTE: all printers add to one printer group should have same printer driver name !!!
 Printers = [
-    Printer('10.56.92.134', 'Color Printer Sales', 'Color printer in Sales Zone', 'EPSON WF-C579R Series'),
-    Printer('10.56.92.135', 'B&W Printer AIoT', 'Black and White printer in Zone Reception', 'EPSON WF-C579R Series'),
-    Printer('10.56.92.136', 'B&W Printer Management', 'Black and White printer in Zone Management', 'EPSON WF-C579R Series')
+    Printer('10.56.92.134', 'Color Printer Sales',
+            'Color printer in Sales Zone', 'Lexmark CX825 Series Class Driver'),
+    Printer('10.56.92.135', 'B&W Printer AIoT',
+            'Black and White printer in Zone Reception', 'Lexmark MX510 Series Class Driver'),
+    Printer('10.56.92.136', 'B&W Printer Management',
+            'Black and White printer in Zone Management', 'Lexmark MX510 Series Class Driver')
 ]
 
 
 class Main:
-    
+
     DriverFolder = os.path.join(BasePath, 'driver')
     logger.debug(f'base path of program: {BasePath}')
 
@@ -38,27 +40,30 @@ class Main:
         self._printer_maps = {
             p.name: p for p in Printers
         }
+        self.target_driver_names = set(p.driver for p in Printers)
 
         DriverInstallButton.bind('<Button-1>', self._install_driver)
         AddPrinterButton.bind('<Button-1>', self._add_printer)
 
-        self._driver_name = Printers[0].driver
-        assert all(printer.driver == self._driver_name for printer in Printers)
-
     def _select_printer(self, _e) -> None:
         selected_printer = SelectedPrinter.get()
-        IntroLabel.config(text=self._printer_maps[selected_printer].description)
+        IntroLabel.config(
+            text=self._printer_maps[selected_printer].description)
 
     def _install_driver(self, _e) -> None:
         DriverInstallButton.config(state='disabled')
         try:
-            messagebox.showinfo('Driver Installation', 'Start driver installation, it may need a while, UI may not responding during this time')
-            installer = DriverInstaller(self.DriverFolder, self._driver_name)
+            messagebox.showinfo(
+                'Driver Installation', 'Start driver installation, it may need a while, UI may not responding during this time')
+            installer = INFInstaller(
+                self.DriverFolder, self.target_driver_names)
             installer.install()
         except Exception:
-            messagebox.showerror('Driver Installation', 'Driver install failed. Please contact admin')
+            messagebox.showerror('Driver Installation',
+                                 'Driver install failed. Please contact admin')
         else:
-            messagebox.showinfo('Driver Installation', 'Driver installed successfully')
+            messagebox.showinfo('Driver Installation',
+                                'Driver installed successfully')
         DriverInstallButton.config(state='normal')
 
     def _add_printer(self, _e) -> None:
@@ -72,12 +77,15 @@ class Main:
         try:
             printer.install()
         except PrinterAlreadyExist:
-            messagebox.showwarning('Notice', f'Selected printer {printer.name} has already in your system')
+            messagebox.showwarning(
+                'Notice', f'Selected printer {printer.name} has already in your system')
         except Exception as e:
             logger.error(f'insatll printer {printer} failed: {e}')
-            messagebox.showerror('Failed', f'Printer {printer.name} installed failed. Please contact admin')
+            messagebox.showerror(
+                'Failed', f'Printer {printer.name} installed failed. Please contact admin')
         else:
-            messagebox.showinfo('Success', f'Printer {printer.name} installed successfully')
+            messagebox.showinfo(
+                'Success', f'Printer {printer.name} installed successfully')
         AddPrinterButton.config(state='normal')
         self._process_busy = False
 
@@ -93,5 +101,6 @@ if __name__ == '__main__':
         messagebox.showerror('Error', 'Please run program with Administrator')
         sys.exit(1)
     if 'nt' not in os.name:
-        messagebox.showerror('Error', 'Installer can only been run in Windows platform')
+        messagebox.showerror(
+            'Error', 'Installer can only been run in Windows platform')
     Main().run()

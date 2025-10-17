@@ -13,11 +13,11 @@ class DriverInstallError(Exception):
     error_msg: str
 
 
-class DriverInstaller:
+class INFInstaller:
 
-    def __init__(self, directory: str, name: str) -> None:
+    def __init__(self, directory: str, target_drivers: t.Iterable[str]) -> None:
         self.directory = Path(path.abspath(directory))
-        self.name = name
+        self.names = list(target_drivers)
 
     @staticmethod
     def _driver_files(directory: Path, suffix: str = 'inf') -> t.Iterator[Path]:
@@ -48,17 +48,18 @@ class DriverInstaller:
         raise DriverInstallError(error_msg=result.stderr.strip())
 
     @staticmethod
-    def _add_printer_driver(driver: Path, name: str) -> None:
+    def _add_printer_driver(driver: Path, names: t.List[str]) -> None:
         # Get abspath of driver
         driver_path = path.abspath(driver)
 
-        # Run printer driver adding process
-        logger.debug('trying to add printer driver: {driver_path}, {name}')
-        subprocess.run(
-            ['printui.exe', '/ia', '/m', name, '/f', driver_path, '/q'],
-            text=True,
-            shell=True
-        )
+        for name in names:
+            # Run printer driver adding process
+            logger.debug('trying to add printer driver: {driver_path}, {name}')
+            subprocess.run(
+                ['printui.exe', '/ia', '/m', name, '/f', driver_path, '/q'],
+                text=True,
+                shell=True
+            )
 
         # Process above sometimes fails, beacuase we dont know which inf file indicates
         # the main driver package, so the result should be ignored.
@@ -67,7 +68,7 @@ class DriverInstaller:
         for inf_file in self._driver_files(self.directory):
             try:
                 self._install_inf_driver(inf_file)
-                self._add_printer_driver(inf_file, self.name)
+                self._add_printer_driver(inf_file, self.names)
             except DriverInstallError as e:
                 logger.error(msg=str(e))
                 raise
