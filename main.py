@@ -17,11 +17,11 @@ from tkinter import messagebox
 
 Printers = [
     Printer('10.56.92.134', 'Color Printer Sales',
-            'Color printer in Sales Zone', 'Lexmark CX825 Series Class Driver'),
+            'Color printer in Sales Zone', 'Lexmark Universal v2'),
     Printer('10.56.92.135', 'B&W Printer AIoT',
-            'Black and White printer in Zone Reception', 'Lexmark MX510 Series Class Driver'),
+            'Black and White printer in Zone Reception', 'Lexmark Universal v2'),
     Printer('10.56.92.136', 'B&W Printer Management',
-            'Black and White printer in Zone Management', 'Lexmark MX510 Series Class Driver')
+            'Black and White printer in Zone Management', 'Lexmark Universal v2')
 ]
 
 
