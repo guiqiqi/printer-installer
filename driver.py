@@ -54,7 +54,7 @@ class INFInstaller:
 
         for name in names:
             # Run printer driver adding process
-            logger.debug('trying to add printer driver: {driver_path}, {name}')
+            logger.debug(f'trying to add printer driver: {driver_path}, {name}')
             subprocess.run(
                 ['printui.exe', '/ia', '/m', name, '/f', driver_path, '/q'],
                 text=True,
