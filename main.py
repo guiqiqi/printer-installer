@@ -51,6 +51,10 @@ class Main:
             text=self._printer_maps[selected_printer].description)
 
     def _install_driver(self, _e) -> None:
+        if self._process_busy:
+            return
+        self._process_busy = True
+
         DriverInstallButton.config(state='disabled')
         try:
             messagebox.showinfo(
@@ -65,6 +69,7 @@ class Main:
             messagebox.showinfo('Driver Installation',
                                 'Driver installed successfully')
         DriverInstallButton.config(state='normal')
+        self._process_busy = False
 
     def _add_printer(self, _e) -> None:
         if self._process_busy:
@@ -75,6 +80,8 @@ class Main:
         printer = self._printer_maps[selected_printer]
         AddPrinterButton.config(state='disabled')
         try:
+            messagebox.showinfo(
+                'Notice', 'Start install printer, it may need a while, UI may not responding during this time')
             printer.install()
         except PrinterAlreadyExist:
             messagebox.showwarning(
